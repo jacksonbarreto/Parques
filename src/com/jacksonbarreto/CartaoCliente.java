@@ -1,12 +1,15 @@
 package com.jacksonbarreto;
 
 import com.sun.javafx.binding.StringFormatter;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 
-public class CartaoCliente {
+public class CartaoCliente implements Serializable, Iterable<CartaoCliente> {
     private boolean ativo;
     private boolean estacionado;
     private String nome;
@@ -30,6 +33,8 @@ public class CartaoCliente {
         return super.clone();
     }
 
+
+
     public String toString(){
         StringBuilder cliente = new StringBuilder();
         cliente.append(String.format("Nome: %s /tMatricula: %s/nStatus: %s  Estacionado: %s",this.nome,this.matricula,this.ativo,this.estacionado));
@@ -38,6 +43,18 @@ public class CartaoCliente {
             cliente.append(m.toString()).append("\n");
         }
         return cliente.toString();
+    }
+    public ArrayList<Movimento> getMovimentosInDatesArray(GregorianCalendar data1, GregorianCalendar data2) {
+        ArrayList<Movimento> movimentosInData = new ArrayList<>();
+        if(!this.movimentos.isEmpty()){
+            for (Movimento m: movimentos) {
+                if (m.getData().getTimeInMillis() > data1.getTimeInMillis() && m.getData().getTimeInMillis() < data2.getTimeInMillis()){
+
+                    movimentosInData.add(m);
+                }
+            }
+        }
+        return movimentosInData;
     }
     public String getMovimentoInDates(GregorianCalendar data1, GregorianCalendar data2){
         StringBuilder movimentoList = new StringBuilder();
@@ -54,6 +71,7 @@ public class CartaoCliente {
         }
         return movimentoList.toString();
     }
+
     private boolean nomeIsInvalid(String nome){
         if(nome.isEmpty() || nome.replaceAll("^ +| +$|( )+","").length() <3)
             return true;
@@ -62,6 +80,9 @@ public class CartaoCliente {
 
     public void addMovimento(char tipo){
         this.movimentos.add(new Movimento(tipo));
+    }
+    public void addMovimento(char tipo, int dia, int mes, int ano, int hora, int minuto){
+        this.movimentos.add(new Movimento(tipo,ano,mes,dia,hora,minuto));
     }
 
 
@@ -95,5 +116,11 @@ public class CartaoCliente {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<CartaoCliente> iterator() {
+        return null;
     }
 }

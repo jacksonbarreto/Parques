@@ -1,8 +1,9 @@
 package com.jacksonbarreto;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
-public class Movimento {
+public class Movimento implements Serializable {
     private GregorianCalendar data;
     private char tipo;
 
@@ -11,6 +12,12 @@ public class Movimento {
         this.data = new GregorianCalendar();
         this.tipo = tipo;
     }
+
+    public Movimento(char tipo, int dia, int mes, int ano, int hora, int minuto){
+        this.data = new GregorianCalendar(ano,mes-1,dia,hora,minuto);
+        this.tipo = tipo;
+    }
+
 
     public Object clone() throws CloneNotSupportedException{
         return super.clone();
@@ -28,6 +35,10 @@ public class Movimento {
 
     public GregorianCalendar getData(){
         return this.data;
+    }
+
+    public void setData(GregorianCalendar data) {
+        this.data = data;
     }
 
     public char getTipo(){

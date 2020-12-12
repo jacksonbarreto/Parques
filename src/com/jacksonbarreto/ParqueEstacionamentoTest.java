@@ -3,6 +3,7 @@ import com.sun.org.omg.CORBA.ValueDefPackage.FullValueDescription;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -132,5 +133,21 @@ public class ParqueEstacionamentoTest {
         parque.entrar("22-AB-17");
         parque.sair("BC-19-42");
 
+    }
+    @Test
+    void obterFaturacaoTest(){
+        ParqueEstacionamento parque = new ParqueEstacionamento("Av. do Atlântico, 98 - Viana do Castelo", 3, 2);
+        parque.adicionarCliente("Júlio César","22-AB-17");
+        parque.adicionarCliente("Carlos Eduardo","44-DD-18");
+        parque.adicionarCliente("Marco Aurélio","BC-19-42");
+        parque.entrarExatamente("44-DD-18",10,12,2020,10,0);
+        parque.entrar("BC-19-42");
+        parque.sairExatamente("44-DD-18",10,12,2020,12,0);
+        parque.entrar("22-AB-17");
+        parque.sair("BC-19-42");
+
+        GregorianCalendar data1 = new GregorianCalendar(2020, 11, 5);
+        GregorianCalendar data2 = new GregorianCalendar(2020,11,17);
+        assertEquals(3.0, parque.obterFaturacao(data1, data2));
     }
 }

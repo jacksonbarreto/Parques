@@ -1,4 +1,4 @@
-package com.jacksonbarreto;
+package com.jacksonbarreto.classes;
 
 import org.jetbrains.annotations.NotNull;
 

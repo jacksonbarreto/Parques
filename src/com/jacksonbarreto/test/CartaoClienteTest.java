@@ -1,4 +1,5 @@
-package com.jacksonbarreto;
+package com.jacksonbarreto.test;
+import com.jacksonbarreto.classes.CartaoCliente;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

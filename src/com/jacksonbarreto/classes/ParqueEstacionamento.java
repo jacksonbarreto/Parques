@@ -1,12 +1,10 @@
-package com.jacksonbarreto;
+package com.jacksonbarreto.classes;
 
 //import com.opencsv.*;
 
 import java.io.*;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;

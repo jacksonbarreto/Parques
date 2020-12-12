@@ -1,10 +1,8 @@
-package com.jacksonbarreto;
+package com.jacksonbarreto.classes;
 
-import com.sun.javafx.binding.StringFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;

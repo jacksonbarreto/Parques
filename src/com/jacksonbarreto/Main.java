@@ -1,5 +1,7 @@
 package com.jacksonbarreto;
 
+import com.jacksonbarreto.classes.ParqueEstacionamento;
+
 import java.util.GregorianCalendar;
 
 public class Main {

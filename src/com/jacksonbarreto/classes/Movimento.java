@@ -1,47 +1,39 @@
 package com.jacksonbarreto.classes;
 
 import java.io.Serializable;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Movimento implements Serializable {
-    private GregorianCalendar data;
-    private char tipo;
+    private final LocalDateTime data;
+    private final char tipo;
 
 
-    public Movimento(char tipo){
-        this.data = new GregorianCalendar();
+    public Movimento(char tipo) {
+        this.data = LocalDateTime.now();
         this.tipo = tipo;
     }
 
-    public Movimento(char tipo, int dia, int mes, int ano, int hora, int minuto){
-        this.data = new GregorianCalendar(ano,mes-1,dia,hora,minuto);
+    public Movimento(char tipo, LocalDateTime data) {
+        this.data = data;
         this.tipo = tipo;
     }
 
-
-    public Object clone() throws CloneNotSupportedException{
-        return super.clone();
+    public Movimento(Movimento movimento) {
+        this.tipo = movimento.getTipo();
+        this.data = movimento.getData();
     }
 
-    public String toString(){
-        int dia = this.data.get(GregorianCalendar.DAY_OF_MONTH);
-        int mes = data.get(GregorianCalendar.MONTH);
-        mes++;
-        int ano = data.get(GregorianCalendar.YEAR);
-        int hora = data.get(GregorianCalendar.HOUR_OF_DAY);
-        int minutos = data.get(GregorianCalendar.MINUTE);
-        return String.format("%c\t%02d/%02d/%d\t%d:%02d",this.tipo,dia,mes,ano,hora,minutos);
+    public String toString() {
+        return String.format("%c\t%s", this.tipo, this.data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy\tHH:mm")));
     }
 
-    public GregorianCalendar getData(){
+    public LocalDateTime getData() {
         return this.data;
     }
 
-    public void setData(GregorianCalendar data) {
-        this.data = data;
-    }
 
-    public char getTipo(){
+    public char getTipo() {
         return this.tipo;
     }
 

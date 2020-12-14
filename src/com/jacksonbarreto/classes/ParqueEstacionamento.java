@@ -1,12 +1,15 @@
 package com.jacksonbarreto.classes;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class ParqueEstacionamento implements Serializable {
     private CartaoCliente[] clientes;
@@ -16,7 +19,7 @@ public class ParqueEstacionamento implements Serializable {
     private String morada;
     private int maxClientes;
     private int lotacao;
-    final private double PRECO_HORA = 1.5;
+    final static private double PRECO_HORA = 1.5;
 
     public ParqueEstacionamento(String morada, int maxClientes, int lotacao) {
 
@@ -61,9 +64,7 @@ public class ParqueEstacionamento implements Serializable {
     private boolean lotacaoEmaxClientesIsInvalid(int maxClientes, int lotacao) {
         if (maxClientes <= 0 || lotacao <= 0)
             return true;
-        if (lotacao > maxClientes)
-            return true;
-        return false;
+        return lotacao > maxClientes;
     }
 
     public void adicionarCliente(String nome, String matricula) {
@@ -119,7 +120,7 @@ public class ParqueEstacionamento implements Serializable {
             throw new IllegalArgumentException("Cliente já estacionado.");
 
         clientes[indexOfMatricula(matricula)].setEstacionado(true);
-        clientes[indexOfMatricula(matricula)].addMovimento('E');
+        clientes[indexOfMatricula(matricula)].adicionaMovimento(TipoMovimento.ENTRADA);
         this.numClientesEstacionados++;
     }
 
@@ -138,7 +139,7 @@ public class ParqueEstacionamento implements Serializable {
             throw new IllegalArgumentException("O cliente não está estacionado.");
 
         clientes[indexOfMatricula(matricula)].setEstacionado(false);
-        clientes[indexOfMatricula(matricula)].addMovimento('S');
+        clientes[indexOfMatricula(matricula)].adicionaMovimento(TipoMovimento.SAIDA);
         this.numClientesEstacionados--;
     }
 
@@ -156,7 +157,7 @@ public class ParqueEstacionamento implements Serializable {
             throw new IllegalArgumentException("Cliente já estacionado.");
 
         clientes[indexOfMatricula(matricula)].setEstacionado(true);
-        clientes[indexOfMatricula(matricula)].addMovimento('E', data);
+        clientes[indexOfMatricula(matricula)].adicionaMovimento(TipoMovimento.ENTRADA, data);
         this.numClientesEstacionados++;
     }
 
@@ -175,12 +176,12 @@ public class ParqueEstacionamento implements Serializable {
             throw new IllegalArgumentException("O cliente não está estacionado.");
 
         clientes[indexOfMatricula(matricula)].setEstacionado(false);
-        clientes[indexOfMatricula(matricula)].addMovimento('S', data);
+        clientes[indexOfMatricula(matricula)].adicionaMovimento(TipoMovimento.SAIDA, data);
         this.numClientesEstacionados--;
     }
 
     public ArrayList<CartaoCliente> listarOcupantes() {
-        ArrayList<CartaoCliente> ocupantes = new ArrayList<CartaoCliente>();
+        ArrayList<CartaoCliente> ocupantes = new ArrayList<>();
 
         if (this.numClientesEstacionados == 0)
             return ocupantes;
@@ -196,7 +197,7 @@ public class ParqueEstacionamento implements Serializable {
     }
 
     public ArrayList<CartaoCliente> listarClientes() {
-        ArrayList<CartaoCliente> clientes = new ArrayList<CartaoCliente>();
+        ArrayList<CartaoCliente> clientes = new ArrayList<>();
 
         if (this.numClientes == 0)
             return clientes;
@@ -204,17 +205,8 @@ public class ParqueEstacionamento implements Serializable {
         for (int i = 0; i < this.numClientes; i++) {
             if (this.clientes[i].isAtivo()) {
                 clientes.add(this.clientes[i]);
-                //clientes.add((CartaoCliente) this.clientes[i].clone());
             }
         }
-
-         /*
-        for(CartaoCliente c : this.clientes){
-            if (c.isAtivo())
-                clientes.add(c);
-        }
-        */
-
         return clientes;
     }
 
@@ -222,7 +214,7 @@ public class ParqueEstacionamento implements Serializable {
         StringBuilder movimentos = new StringBuilder();
         movimentos.append("\n**********\tMovimentos do Parque\t**********\n");
         for (int i = 0; i < this.numClientes; i++) {
-            movimentos.append(this.clientes[i].getMovimentoInDates(data1, data2));
+            movimentos.append(this.clientes[i].getMovimentosNoIntervaloString(data1, data2));
         }
 
         return movimentos.toString();
@@ -259,15 +251,14 @@ public class ParqueEstacionamento implements Serializable {
         long horas;
 
 
-
         for (int i = 0; i < this.numClientes; i++) {
             if (this.clientes[i].isAtivo()) {
-                movimento = clientes[i].getMovimentosInDatesArray(data1, data2);
+                movimento = clientes[i].getMovimentosNoIntervaloArray(data1, data2);
                 if (!movimento.isEmpty()) {
                     for (int j = 0; j < movimento.size() - 1; j++) {
                         m1 = movimento.get(j);
                         m2 = movimento.get(j + 1);
-                        if (m1.getTipo() == 'E' && m2.getTipo() == 'S') {
+                        if (m1.getTipo() == TipoMovimento.ENTRADA && m2.getTipo() == TipoMovimento.SAIDA) {
 
                             period = Duration.between(m1.getData(), m2.getData());
                             horas = period.toHours();
